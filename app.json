@@ -9,21 +9,24 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon",
-      "bundleIdentifier": "com.weekly.app",
+      "bundleIdentifier": "com.shinjoseph0427.weekly",
       "usesAppleSignIn": true,
       "infoPlist": {
         "NSCameraUsageDescription": "WEEKLY uses your camera to add profile photos.",
         "NSPhotoLibraryUsageDescription": "WEEKLY lets you pick profile photos from your library.",
-        "NSLocationWhenInUseUsageDescription": "WEEKLY uses your location to match you with people nearby this week."
+        "NSLocationWhenInUseUsageDescription": "WEEKLY uses your location to match you with people nearby this week.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
-      "package": "com.weekly.app",
+      "package": "com.shinjoseph0427.weekly",
       "permissions": [
-        "CAMERA",
-        "READ_MEDIA_IMAGES",
-        "ACCESS_FINE_LOCATION",
-        "POST_NOTIFICATIONS"
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION"
       ],
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
@@ -54,7 +57,7 @@
       [
         "@react-native-google-signin/google-signin",
         {
-          "iosUrlScheme": "com.googleusercontent.apps.556826899663-6k6kd4cjpkhjhv7t6kb0snjj6v9c5vim"
+          "iosUrlScheme": "com.googleusercontent.apps.143763314354-v9ihmpj8euasubjpgua0pu5uecik3t3j"
         }
       ],
       [
@@ -69,11 +72,35 @@
           "locationWhenInUsePermission": "WEEKLY matches you with people nearby this week."
         }
       ],
-      "expo-image"
+      "expo-image",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "extraPods": [
+              {
+                "name": "GoogleUtilities",
+                "modular_headers": true
+              },
+              {
+                "name": "RecaptchaInterop",
+                "modular_headers": true
+              }
+            ]
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "5a4ae734-88ef-400e-85ff-20b46340ad6b"
+      }
+    },
+    "owner": "shinjoseph0427"
   }
 }

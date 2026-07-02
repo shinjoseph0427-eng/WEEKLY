@@ -1,17 +1,17 @@
 // Settings hub — links to profile/safety/legal screens + sign out.
 // Privacy and Terms are linked here per the locked decision.
-import { Link } from 'expo-router';
+import { Link, type Href } from 'expo-router';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { signOut } from '../../src/lib/auth';
 import { C, F, R, S } from '../../src/theme';
 
-const ROWS: { href: string; label: string }[] = [
+const ROWS = [
   { href: '/settings/edit-profile', label: 'Edit profile' },
   { href: '/settings/blocked', label: 'Blocked users' },
   { href: '/settings/privacy', label: 'Privacy Policy' },
   { href: '/settings/terms', label: 'Terms of Service' },
   { href: '/settings/delete-account', label: 'Delete account' },
-];
+] as const satisfies ReadonlyArray<{ href: Href; label: string }>;
 
 export default function SettingsIndex() {
   async function handleSignOut() {
