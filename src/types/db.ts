@@ -22,6 +22,8 @@ export interface Profile {
   bio: string | null;
   is_solo: boolean;
   onboarding_complete: boolean | null;
+  // Source of truth for age (see migration 20260701000000). 'YYYY-MM-DD'.
+  birth_date: ISODateString | null;
   birth_year: number | null;
   age: number | null;
   fcm_token: string | null;
