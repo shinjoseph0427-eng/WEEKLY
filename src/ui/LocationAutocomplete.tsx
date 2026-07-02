@@ -42,6 +42,7 @@ export function LocationAutocomplete({
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [resolving, setResolving] = useState(false);
+  const [searchError, setSearchError] = useState(false);
 
   // One session token per mount groups keystrokes + the final details call.
   const sessionToken = useRef<string>(Crypto.randomUUID()).current;
@@ -61,15 +62,25 @@ export function LocationAutocomplete({
     if (debounce.current) clearTimeout(debounce.current);
     if (t.trim().length < 2) {
       setPredictions([]);
+      setSearchError(false);
       setOpen(false);
       return;
     }
     setLoading(true);
+    setSearchError(false);
     setOpen(true);
     debounce.current = setTimeout(async () => {
-      const res = await searchPlaces(t, sessionToken);
-      setPredictions(res);
-      setLoading(false);
+      try {
+        const res = await searchPlaces(t, sessionToken);
+        setPredictions(res);
+        setSearchError(false);
+      } catch {
+        // Function/network failed → offer manual entry instead of "No matches".
+        setPredictions([]);
+        setSearchError(true);
+      } finally {
+        setLoading(false);
+      }
     }, 300);
   }
 
@@ -119,6 +130,10 @@ export function LocationAutocomplete({
             <View style={styles.suggestRow}>
               <ActivityIndicator color={C.orange} size="small" />
             </View>
+          ) : searchError ? (
+            <Text style={styles.suggestEmpty}>
+              Location search is unavailable. You can still type your city.
+            </Text>
           ) : predictions.length > 0 ? (
             predictions.map((p) => (
               <Pressable

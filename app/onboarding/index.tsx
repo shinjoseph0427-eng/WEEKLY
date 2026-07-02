@@ -219,29 +219,29 @@ export default function OnboardingScreen() {
                 ))}
               </View>
             </View>
+
+            <View style={styles.actions}>
+              {notice ? <Text style={styles.notice}>{notice}</Text> : null}
+              {error ? <Text style={styles.error}>{error}</Text> : null}
+              <Pressable
+                accessibilityRole="button"
+                disabled={!canSubmit}
+                onPress={onSubmit}
+                style={({ pressed }) => [
+                  styles.cta,
+                  !canSubmit && styles.ctaDisabled,
+                  pressed && canSubmit && styles.pressed,
+                ]}
+              >
+                {submitting ? (
+                  <ActivityIndicator color={C.cream} />
+                ) : (
+                  <Text style={styles.ctaText}>Continue</Text>
+                )}
+              </Pressable>
+            </View>
           </View>
         </ScrollView>
-
-        <View style={styles.footer}>
-          {notice ? <Text style={styles.notice}>{notice}</Text> : null}
-          {error ? <Text style={styles.error}>{error}</Text> : null}
-          <Pressable
-            accessibilityRole="button"
-            disabled={!canSubmit}
-            onPress={onSubmit}
-            style={({ pressed }) => [
-              styles.cta,
-              !canSubmit && styles.ctaDisabled,
-              pressed && canSubmit && styles.pressed,
-            ]}
-          >
-            {submitting ? (
-              <ActivityIndicator color={C.cream} />
-            ) : (
-              <Text style={styles.ctaText}>Continue</Text>
-            )}
-          </Pressable>
-        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -250,7 +250,7 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: C.bg },
   flex: { flex: 1 },
-  content: { paddingHorizontal: S.lg, paddingTop: S.md, paddingBottom: S.xl },
+  content: { paddingHorizontal: S.lg, paddingTop: S.md, paddingBottom: S.xxxl },
   header: { alignItems: 'center', marginBottom: S.lg },
   title: { fontSize: F.h1.fontSize, fontWeight: '800', color: C.text, letterSpacing: -0.5 },
   subtitle: { marginTop: S.xs, fontSize: F.body.fontSize, color: C.textMuted, textAlign: 'center' },
@@ -258,15 +258,7 @@ const styles = StyleSheet.create({
   field: { marginBottom: S.lg },
   sectionLabel: { fontSize: 14, fontWeight: '700', color: C.text, marginBottom: S.sm },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: S.xs },
-  footer: {
-    paddingHorizontal: S.lg,
-    paddingTop: S.sm,
-    paddingBottom: S.sm,
-    borderTopWidth: 1,
-    borderTopColor: C.border,
-    backgroundColor: C.bg,
-    gap: S.xs,
-  },
+  actions: { marginTop: S.md, gap: S.sm },
   notice: { fontSize: 13, color: C.textMuted, textAlign: 'center' },
   error: { fontSize: 13, color: C.danger, textAlign: 'center' },
   cta: {

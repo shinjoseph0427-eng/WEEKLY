@@ -51,33 +51,41 @@ interface DetailsResult {
 
 /**
  * City/region predictions for a query via the Edge Function `autocomplete`
- * action. Returns [] on any failure so the field keeps working as plain input
- * (we never fabricate results). `sessionToken` groups keystrokes + the details
- * call for Google billing.
+ * action. Returns an empty array for a genuine no-match, but THROWS when the
+ * function/network fails so the UI can distinguish "no results" from "search
+ * unavailable" and offer the manual-city fallback. `sessionToken` groups
+ * keystrokes + the details call for Google billing.
  */
 export async function searchPlaces(
   input: string,
   sessionToken?: string,
 ): Promise<PlacePrediction[]> {
-  if (input.trim().length < 2) return [];
+  const trimmed = input.trim();
+  if (trimmed.length < 2) return [];
 
-  try {
-    const { data, error } = await supabase.functions.invoke<AutocompleteResult>(
-      PLACES_FUNCTION_NAME,
-      { body: { type: 'autocomplete', input, sessionToken } },
-    );
-    if (error || !data?.suggestions) return [];
+  if (__DEV__) console.log('[places] autocomplete →', trimmed.length, 'chars');
 
-    return data.suggestions
-      .filter((s): s is NonNullable<typeof s> => Boolean(s?.placeId))
-      .map((s) => ({
-        id: s.placeId as string,
-        primary: s.mainText ?? s.description ?? '',
-        secondary: s.secondaryText ?? '',
-      }));
-  } catch {
-    return [];
+  const { data, error } = await supabase.functions.invoke<AutocompleteResult>(
+    PLACES_FUNCTION_NAME,
+    { body: { type: 'autocomplete', input: trimmed, sessionToken } },
+  );
+
+  if (error) {
+    // FunctionsHttpError carries the (non-secret) response; surface status only.
+    if (__DEV__) console.log('[places] autocomplete error:', error.message);
+    throw error;
   }
+
+  const suggestions = (data?.suggestions ?? [])
+    .filter((s): s is NonNullable<typeof s> => Boolean(s?.placeId))
+    .map((s) => ({
+      id: s.placeId as string,
+      primary: s.mainText ?? s.description ?? '',
+      secondary: s.secondaryText ?? '',
+    }));
+
+  if (__DEV__) console.log('[places] suggestions:', suggestions.length);
+  return suggestions;
 }
 
 /**

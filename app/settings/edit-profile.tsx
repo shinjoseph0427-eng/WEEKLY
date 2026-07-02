@@ -197,25 +197,25 @@ function EditProfileForm({ userId, profile }: { userId: string; profile: Profile
               maxLength={BIO_MAX}
               editable={!saving}
             />
+
+            <View style={styles.actions}>
+              {notice ? <Text style={styles.notice}>{notice}</Text> : null}
+              {error ? <Text style={styles.error}>{error}</Text> : null}
+              <Pressable
+                accessibilityRole="button"
+                disabled={!canSave}
+                onPress={onSave}
+                style={({ pressed }) => [
+                  styles.cta,
+                  !canSave && styles.ctaDisabled,
+                  pressed && canSave && styles.pressed,
+                ]}
+              >
+                {saving ? <ActivityIndicator color={C.cream} /> : <Text style={styles.ctaText}>Save</Text>}
+              </Pressable>
+            </View>
           </View>
         </ScrollView>
-
-        <View style={styles.footer}>
-          {notice ? <Text style={styles.notice}>{notice}</Text> : null}
-          {error ? <Text style={styles.error}>{error}</Text> : null}
-          <Pressable
-            accessibilityRole="button"
-            disabled={!canSave}
-            onPress={onSave}
-            style={({ pressed }) => [
-              styles.cta,
-              !canSave && styles.ctaDisabled,
-              pressed && canSave && styles.pressed,
-            ]}
-          >
-            {saving ? <ActivityIndicator color={C.cream} /> : <Text style={styles.ctaText}>Save</Text>}
-          </Pressable>
-        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: C.bg },
   flex: { flex: 1 },
   loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  content: { paddingHorizontal: S.lg, paddingTop: S.md, paddingBottom: S.xl },
+  content: { paddingHorizontal: S.lg, paddingTop: S.md, paddingBottom: S.xxxl },
   title: {
     fontSize: F.h2.fontSize,
     fontWeight: '800',
@@ -240,15 +240,7 @@ const styles = StyleSheet.create({
     marginBottom: S.sm,
   },
   form: { marginTop: S.sm },
-  footer: {
-    paddingHorizontal: S.lg,
-    paddingTop: S.sm,
-    paddingBottom: S.sm,
-    borderTopWidth: 1,
-    borderTopColor: C.border,
-    backgroundColor: C.bg,
-    gap: S.xs,
-  },
+  actions: { marginTop: S.md, gap: S.sm },
   notice: { fontSize: 13, color: C.textMuted, textAlign: 'center' },
   error: { fontSize: 13, color: C.danger, textAlign: 'center' },
   cta: {

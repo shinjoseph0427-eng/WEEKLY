@@ -113,10 +113,17 @@ Deno.serve(async (req: Request): Promise<Response> => {
         body: JSON.stringify({
           input,
           includedPrimaryTypes: ['(cities)'], // city/region-level only (privacy)
+          languageCode: 'en',
+          regionCode: 'US',
           ...(sessionToken ? { sessionToken } : {}),
         }),
       });
-      if (!res.ok) return json({ error: 'Autocomplete request failed.' }, 502);
+      if (!res.ok) {
+        // Log full upstream detail to server logs only (no API key present in it);
+        // return just a coarse status to the client (no raw Google payload).
+        console.error('places autocomplete upstream error', res.status, await res.text());
+        return json({ error: 'Autocomplete request failed.', upstreamStatus: res.status }, 502);
+      }
 
       const data = (await res.json()) as AutocompleteRaw;
       const suggestions = (data.suggestions ?? [])
@@ -147,7 +154,10 @@ Deno.serve(async (req: Request): Promise<Response> => {
           'X-Goog-FieldMask': 'id,displayName,formattedAddress,location,addressComponents',
         },
       });
-      if (!res.ok) return json({ error: 'Details request failed.' }, 502);
+      if (!res.ok) {
+        console.error('places details upstream error', res.status, await res.text());
+        return json({ error: 'Details request failed.', upstreamStatus: res.status }, 502);
+      }
 
       const data = (await res.json()) as DetailsRaw;
       const lat = data.location?.latitude;
